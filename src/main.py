@@ -2,7 +2,7 @@ import sys
 from typing import List
 import cv2 as cv
 import numpy as np
-import yaml
+#import yaml
 from pathlib import Path
 from PySide6.QtCore import QThread, Signal, Slot, QObject, QTimer
 from PySide6.QtGui import QImage, QPixmap, QStandardItemModel, QStandardItem
@@ -46,12 +46,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.image_dir = (base_dir.parent / "image")        # projects/image
         self.image_dir.mkdir(parents=True, exist_ok=True)
 
-        #저장된 경로, 인식한 약 이름    
+        #저장된 경로, 인식한 약 이름    c
         self.captured_image_path = None
         self.current_medicine_name = None
 
         #식약처 api키 불러오기
-        self.api_key = self._load_api_key()
+        self.api_key = "I4dBVv+Mef8KeUzJpsbXVyI2FzJRDvaaTrqjwDp3NSU1lZoosPsZFaxekYcWHETBTVLXBnjKr8gE5kiPoAS/XA=="
         if self.api_key:
             self.dur_client = DURClient(api_key=self.api_key)
         else:
@@ -74,10 +74,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dur_table_view.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.dur_table_view.setSortingEnabled(False)
 
-    def _load_api_key(self) -> str:
-        """
-        Loads the API key from the config.yaml file.
-        """
+    """def _load_api_key(self) -> str:
+    
         try:
             with open("config.yaml", "r", encoding="utf-8") as f:
                 config = yaml.safe_load(f) or {}
@@ -87,7 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return api_key
         except FileNotFoundError:
             self.statusbar.showMessage("config.yaml not found.", 5000)
-            return ""
+            return """
 
     #카메라 화면
     def _update_camera_preview(self):
