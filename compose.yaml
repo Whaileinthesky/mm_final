@@ -1,0 +1,6 @@
+services:
+  medicinemanagerfinal:
+    image: medicinemanagerfinal
+    build:
+      context: .
+      dockerfile: ./Dockerfile
