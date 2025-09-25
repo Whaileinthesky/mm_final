@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._configure_dur_table()
 
         #camera setting
-        self._last_frame_rgb = None  # 최신 RGB 프레임 저장 (numpy array)
+        self.frame_rgb = None  # 최신 RGB 프레임 저장 (numpy array)
         self.picam2 = None
 
         if not PICAM_AVAILABLE:
