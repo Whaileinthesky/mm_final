@@ -1,6 +1,7 @@
 # To ensure app dependencies are ported from your virtual environment/host machine into your container, run 'pip freeze > requirements.txt' in the terminal to overwrite this file
 tensorflow==2.15.0
 opencv-python==4.7.0.72
-Pyside6 == 6.9.2
+Pyside6 == 6.8.0.2
 numpy == 1.26.4
+requests
 

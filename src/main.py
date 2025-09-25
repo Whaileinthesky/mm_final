@@ -12,7 +12,7 @@ from api_client import DURClient
 from predict_class import predict_func
 
 try:
-    from Picamera2 import Picamera2
+    from picamera2 import Picamera2
     PICAM_AVAILABLE = True
 except Exception:
     PICAM_AVAILABLE = False
@@ -46,6 +46,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if not PICAM_AVAILABLE:
             self.statusbar.showMessage("Picamera2가 설치되어 있지 않습니다. `sudo apt install python3-picamera2`", 8000)
+            print("PICAM == FAlSE")
         else:
             try:
                 self.picam2 = Picamera2()
