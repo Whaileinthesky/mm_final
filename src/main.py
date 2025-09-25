@@ -12,7 +12,7 @@ from api_client import DURClient
 from predict_class import predict_func
 
 try:
-    from picamera2 import Picamera2
+    from Picamera2 import Picamera2
     PICAM_AVAILABLE = True
 except Exception:
     PICAM_AVAILABLE = False
