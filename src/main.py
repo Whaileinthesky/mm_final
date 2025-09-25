@@ -152,6 +152,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.captured_image_path = str(save_path)
         self.statusbar.showMessage(f"사진 저장: {self.captured_image_path}", 3000)
+        pred = predict_func(
+            model_path= "", 
+            class_indices_path=""
+                            )
+        
+        self.current_medicine_name = pred
 
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
