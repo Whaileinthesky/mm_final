@@ -145,8 +145,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # 저장(RGB -> BGR 변환 후 imwrite)
         import cv2 as cv
-        bgr = cv.cvtColor(self._last_frame_rgb, cv.COLOR_RGB2BGR)
-        if not cv.imwrite(str(save_path), bgr):
+        #bgr = cv.cvtColor(self._last_frame_rgb, cv.COLOR_RGB2BGR)
+        if not cv.imwrite(str(save_path), self._last_frame_rgb):
             self.statusbar.showMessage("사진 저장 실패", 2000)
             return
 
