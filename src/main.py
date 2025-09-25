@@ -102,7 +102,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._last_frame_rgb = frame_rgb  # 저장/예측에 동일 프레임 사용
 
         h, w, ch = frame_rgb.shape  # ch=3
-        qimg = QImage(frame_rgb.data, w, h, 3*w, QImage.Format.Format_RGB888).copy()
+        qimg = QImage(frame_rgb.data, w, h, 3*w, QImage.Format.Format_BGR888).copy()
         self.camera_view.setPixmap(QPixmap.fromImage(qimg))
         self.camera_view.setScaledContents(True)
         
