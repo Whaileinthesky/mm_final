@@ -92,6 +92,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if frame_rgb is None:
             return
 
+        def _update_camera_preview(self):
+        if self.picam2 is None:
+            return
+        try:
+            frame_rgb = self.picam2.capture_array()  # RGB888
+        except Exception:
+            return
+
+        if frame_rgb is None:
+            return
+
+        self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
+
+        h, w, ch = frame_rgb.shape  # ch = 3
+        bytes_per_line = ch * w
+        qimg = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+
+        self.camera_view.setPixmap(QPixmap.fromImage(qimg))
+        self.camera_view.setScaledContents(True)
         self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
 
         h, w, ch = frame_rgb.shape  # ch = 3
