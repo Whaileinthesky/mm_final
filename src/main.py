@@ -11,6 +11,12 @@ from ui_final import Ui_MainWindow
 from api_client import DURClient
 from predict_class import predict_func
 
+try:
+    from picamera2 import Picamera2
+    PICAM_AVAILABLE = True
+except Exception:
+    PICAM_AVAILABLE = False
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -32,10 +38,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._configure_dur_table()
 
         #camera setting
-        self.cap = cv.VideoCapture(0)
-        if not self.cap.isOpened():
-            self.statusbar.showMessage("카메라를 열 수 없습니다.", 3000)
-        self._last_frame = None  # 최근 프레임 보관
+        self._last_frame_rgb = None  # 최신 RGB 프레임 저장 (numpy array)
+        self.picam2 = None
+
+        if not PICAM_AVAILABLE:
+            self.statusbar.showMessage("Picamera2가 설치되어 있지 않습니다. `sudo apt install python3-picamera2`", 8000)
+        else:
+            try:
+                self.picam2 = Picamera2()
+                # 미리보기용 RGB888 설정 (QImage로 바로 사용 가능)
+                config = self.picam2.create_preview_configuration(
+                    main={"size": (1280, 720), "format": "RGB888"}
+                )
+                self.picam2.configure(config)
+                self.picam2.start()
+            except Exception as e:
+                self.statusbar.showMessage(f"카메라 초기화 실패: {e}", 8000)
+                self.picam2 = None
 
         self.cam_timer = QTimer(self)
         self.cam_timer.timeout.connect(self._update_camera_preview)
@@ -61,6 +80,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #ui 버튼 연결
         self.add_medicine_button.clicked.connect(self.on_add_medicine_clicked)
         self.quit_button.clicked.connect(self.close)
+    
+    def _update_camera_preview(self):
+        if self.picam2 is None:
+            return
+        try:
+            frame_rgb = self.picam2.capture_array()  # RGB888
+        except Exception:
+            return
+
+        if frame_rgb is None:
+            return
+
+        self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
+
+        h, w, ch = frame_rgb.shape  # ch = 3
+        bytes_per_line = ch * w
+        qimg = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+
+        self.camera_view.setPixmap(QPixmap.fromImage(qimg))
+        self.camera_view.setScaledContents(True)
         
     def _configure_dur_table(self):
         """
