@@ -8,115 +8,106 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QListView,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QScrollArea, QSizePolicy, QStatusBar, QTableView,
-    QVBoxLayout, QWidget)
+from PySide6 import QtCore, QtWidgets, QtGui
 #import logo
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1403, 849)
-        self.centralwidget = QWidget(MainWindow)
-        self.centralwidget.setObjectName(u"centralwidget")
-        self.my_medicines_list_view = QListView(self.centralwidget)
-        self.my_medicines_list_view.setObjectName(u"my_medicines_list_view")
-        self.my_medicines_list_view.setGeometry(QRect(750, 300, 461, 171))
-        self.my_medicines_list_view.setDragEnabled(True)
-        self.quit_button = QPushButton(self.centralwidget)
-        self.quit_button.setObjectName(u"quit_button")
-        self.quit_button.setGeometry(QRect(1230, 160, 151, 121))
-        self.add_medicine_button = QPushButton(self.centralwidget)
-        self.add_medicine_button.setObjectName(u"add_medicine_button")
-        self.add_medicine_button.setGeometry(QRect(1230, 20, 151, 121))
-        self.dur_data_scroll_area = QScrollArea(self.centralwidget)
-        self.dur_data_scroll_area.setObjectName(u"dur_data_scroll_area")
-        self.dur_data_scroll_area.setGeometry(QRect(20, 530, 1361, 271))
-        self.dur_data_scroll_area.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1359, 269))
-        self.label_5 = QLabel(self.scrollAreaWidgetContents)
-        self.label_5.setObjectName(u"label_5")
-        self.label_5.setGeometry(QRect(10, 0, 161, 31))
-        self.label_6 = QLabel(self.scrollAreaWidgetContents)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setGeometry(QRect(460, 0, 121, 31))
-        self.label_7 = QLabel(self.scrollAreaWidgetContents)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(220, 10, 108, 24))
-        self.dur_table_view = QTableView(self.scrollAreaWidgetContents)
-        self.dur_table_view.setObjectName(u"dur_table_view")
-        self.dur_table_view.setGeometry(QRect(20, 40, 1321, 211))
-        self.dur_data_scroll_area.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayoutWidget = QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(750, 50, 461, 211))
-        self.current_text_layout = QVBoxLayout(self.verticalLayoutWidget)
-        self.current_text_layout.setObjectName(u"current_text_layout")
-        self.current_text_layout.setContentsMargins(0, 0, 0, 0)
-        self.ocr_result_label = QLabel(self.verticalLayoutWidget)
-        self.ocr_result_label.setObjectName(u"ocr_result_label")
-        self.ocr_result_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.ocr_result_label.setMargin(16)
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.setFixedSize(720, 480)  # 저해상도 고정 (원하면 resize로 바꿔도 됨)
 
-        self.current_text_layout.addWidget(self.ocr_result_label)
-
-        self.label = QLabel(self.centralwidget)
-        self.label.setObjectName(u"label")
-        self.label.setGeometry(QRect(750, 15, 161, 31))
-        self.label_2 = QLabel(self.centralwidget)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(10, 10, 191, 31))
-        self.label_3 = QLabel(self.centralwidget)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setGeometry(QRect(20, 480, 211, 41))
-        self.label_4 = QLabel(self.centralwidget)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setGeometry(QRect(750, 260, 251, 41))
-        self.verticalLayoutWidget_2 = QWidget(self.centralwidget)
-        self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
-        self.verticalLayoutWidget_2.setGeometry(QRect(19, 49, 691, 421))
-        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget_2)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.camera_view = QLabel(self.verticalLayoutWidget_2)
-        self.camera_view.setObjectName(u"camera_view")
-
-        self.verticalLayout.addWidget(self.camera_view)
-
-        self.label_8 = QLabel(self.centralwidget)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setGeometry(QRect(1230, 310, 151, 171))
-        self.label_8.setPixmap(QPixmap(u":/images/logo.png"))
-        self.label_8.setScaledContents(True)
+        # --- central widget & root layout ---
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(MainWindow)
-        self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1403, 22))
-        self.menuMedicine_Manager = QMenu(self.menubar)
-        self.menuMedicine_Manager.setObjectName(u"menuMedicine_Manager")
+        root_v = QtWidgets.QVBoxLayout(self.centralwidget)
+        root_v.setContentsMargins(8, 8, 8, 8)
+        root_v.setSpacing(8)
+
+        # ================= 상단: 좌(카메라) + 우(텍스트/버튼/리스트) =================
+        top_h = QtWidgets.QHBoxLayout()
+        top_h.setSpacing(8)
+        root_v.addLayout(top_h, 1)
+
+        # (좌) 카메라 블록
+        left_v = QtWidgets.QVBoxLayout()
+        self.label_camera_title = QtWidgets.QLabel("Camera View", self.centralwidget)
+        self.camera_view = QtWidgets.QLabel(self.centralwidget)
+        self.camera_view.setObjectName("camera_view")
+        self.camera_view.setMinimumSize(QtCore.QSize(320, 240))  # 4:3 최소 확보
+        self.camera_view.setAlignment(QtCore.Qt.AlignCenter)
+        self.camera_view.setStyleSheet("background:#111; color:#bbb;")
+        self.camera_view.setText("No Signal")
+        left_v.addWidget(self.label_camera_title)
+        left_v.addWidget(self.camera_view, 1)
+        top_h.addLayout(left_v, 1)
+
+        # (우) 현재 텍스트 + 버튼 두 개 + 복용중 리스트
+        right_v = QtWidgets.QVBoxLayout()
+        self.label_current_text = QtWidgets.QLabel("Current Text", self.centralwidget)
+        self.ocr_result_label = QtWidgets.QLabel("Pill name will be displayed here.", self.centralwidget)
+        self.ocr_result_label.setObjectName("ocr_result_label")
+        self.ocr_result_label.setWordWrap(True)
+
+        btn_h = QtWidgets.QHBoxLayout()
+        self.add_medicine_button = QtWidgets.QPushButton("ADD", self.centralwidget)
+        self.add_medicine_button.setObjectName("add_medicine_button")
+        self.quit_button = QtWidgets.QPushButton("QUIT", self.centralwidget)
+        self.quit_button.setObjectName("quit_button")
+        btn_h.addWidget(self.add_medicine_button)
+        btn_h.addWidget(self.quit_button)
+
+        self.label_taking = QtWidgets.QLabel("Currently Taking", self.centralwidget)
+        self.my_medicines_list_view = QtWidgets.QListView(self.centralwidget)
+        self.my_medicines_list_view.setObjectName("my_medicines_list_view")
+
+        right_v.addWidget(self.label_current_text)
+        right_v.addWidget(self.ocr_result_label)
+        right_v.addLayout(btn_h)
+        right_v.addWidget(self.label_taking)
+        right_v.addWidget(self.my_medicines_list_view, 1)
+        top_h.addLayout(right_v, 1)
+
+        # ================= 하단: DUR 검색 결과(스크롤 + 테이블) =================
+        self.label_dur = QtWidgets.QLabel("DUR Search Results", self.centralwidget)
+        root_v.addWidget(self.label_dur)
+
+        self.dur_data_scroll_area = QtWidgets.QScrollArea(self.centralwidget)
+        self.dur_data_scroll_area.setObjectName("dur_data_scroll_area")
+        self.dur_data_scroll_area.setWidgetResizable(True)
+
+        scroll_w = QtWidgets.QWidget()
+        sv_v = QtWidgets.QVBoxLayout(scroll_w)
+
+        header_h = QtWidgets.QHBoxLayout()
+        header_h.addWidget(QtWidgets.QLabel("Ingredient", scroll_w))
+        header_h.addWidget(QtWidgets.QLabel("Side Effects", scroll_w))
+        sv_v.addLayout(header_h)
+
+        self.dur_table_view = QtWidgets.QTableView(scroll_w)
+        self.dur_table_view.setObjectName("dur_table_view")
+        # 헤더 폭 자동 분배
+        header = self.dur_table_view.horizontalHeader()
+        header.setStretchLastSection(True)
+        try:
+            from PySide6.QtWidgets import QHeaderView
+        except Exception:
+            from PyQt5.QtWidgets import QHeaderView  # PyQt5 호환
+        header.setSectionResizeMode(QHeaderView.Stretch)
+
+        sv_v.addWidget(self.dur_table_view)
+        self.dur_data_scroll_area.setWidget(scroll_w)
+
+        root_v.addWidget(self.dur_data_scroll_area, 1)
+
+        # --- menubar / statusbar (있으면 유지) ---
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(MainWindow)
-        self.statusbar.setObjectName(u"statusbar")
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
         MainWindow.setStatusBar(self.statusbar)
 
-        self.menubar.addAction(self.menuMedicine_Manager.menuAction())
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.retranslateUi(MainWindow)
-
-        QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
