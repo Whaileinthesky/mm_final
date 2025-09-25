@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView
 from ui_final import Ui_MainWindow
 from api_client import DURClient
 from predict_class import predict_func
+from pathlib import Path
 
 try:
     from picamera2 import Picamera2
@@ -40,29 +41,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dur_table_view.setModel(self.dur_table_model)
         self._configure_dur_table()
 
-        #camera setting
-        self.frame_rgb = None  # 최신 RGB 프레임 저장 (numpy array)
+        self._last_frame_rgb = None
         self.picam2 = None
 
         if not PICAM_AVAILABLE:
-            self.statusbar.showMessage("Picamera2가 설치되어 있지 않습니다. `sudo apt install python3-picamera2`", 8000)
-            print("PICAM == FAlSE")
+            self.statusbar.showMessage("Picamera2 미설치: sudo apt install python3-picamera2", 8000)
         else:
             try:
                 self.picam2 = Picamera2()
-                # 미리보기용 RGB888 설정 (QImage로 바로 사용 가능)
-                config = self.picam2.create_preview_configuration(
-                    main={"size": (1280, 720), "format": "RGB888"}
+                cfg = self.picam2.create_preview_configuration(
+                    main={"size": (640, 480), "format": "RGB888"}  # 호환성/속도 좋은 기본값
                 )
-                self.picam2.configure(config)
+                self.picam2.configure(cfg)
                 self.picam2.start()
             except Exception as e:
                 self.statusbar.showMessage(f"카메라 초기화 실패: {e}", 8000)
                 self.picam2 = None
 
+        # 미리보기 타이머(워밍업 0.5s 후 시작)
         self.cam_timer = QTimer(self)
         self.cam_timer.timeout.connect(self._update_camera_preview)
-        self.cam_timer.start(33)  # 약 30fps (33ms)
+        QTimer.singleShot(500, lambda: self.cam_timer.start(33)) 
         print("Timer Started")
 
         #image 저장 위치
@@ -87,41 +86,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.quit_button.clicked.connect(self.close)
     
     def _update_camera_preview(self):
+        """Picamera2에서 프레임을 받아 QLabel(camera_view)에 표시하고
+        최신 프레임을 self._last_frame_rgb 로 보관한다."""
         if self.picam2 is None:
             return
         try:
-            frame_rgb = self.picam2.capture_array()  # RGB888
-        except Exception:
+            frame_rgb = self.picam2.capture_array("main")  # RGB888 numpy(H,W,3)
+        except Exception as e:
+            print("[CAPTURE ERR]", repr(e))
+            self.statusbar.showMessage(f"CAPTURE ERR: {e}", 2000)
             return
-
         if frame_rgb is None:
             return
 
-        def _update_camera_preview(self):
-            if self.picam2 is None:
-                return
-            try:
-                frame_rgb = self.picam2.capture_array()  # RGB888
-            except Exception:
-                return
+        self._last_frame_rgb = frame_rgb  # 저장/예측에 동일 프레임 사용
 
-            if frame_rgb is None:
-                return
-
-        self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
-
-        h, w, ch = frame_rgb.shape  # ch = 3
-        bytes_per_line = ch * w
-        qimg = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-
-        self.camera_view.setPixmap(QPixmap.fromImage(qimg))
-        self.camera_view.setScaledContents(True)
-        self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
-
-        h, w, ch = frame_rgb.shape  # ch = 3
-        bytes_per_line = ch * w
-        qimg = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-
+        h, w, ch = frame_rgb.shape  # ch=3
+        qimg = QImage(frame_rgb.data, w, h, 3*w, QImage.Format.Format_RGB888).copy()
         self.camera_view.setPixmap(QPixmap.fromImage(qimg))
         self.camera_view.setScaledContents(True)
         
@@ -150,54 +131,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.statusbar.showMessage("config.yaml not found.", 5000)
             return """
 
-    #카메라 화면
-    def _update_camera_preview(self):
-        if not hasattr(self, "cap") or not self.cap.isOpened():
-            return
-        ok, frame = self.cap.read()
-        if not ok:
-            return
-
-        self._last_frame = frame  # 최신 프레임 저장 (캡처 시 사용)
-
-        # BGR -> RGB 변환 후 QLabel 표시
-        rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        h, w, ch = rgb.shape
-        bytes_per_line = ch * w
-        qimg = QImage(rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-        
-        self.camera_view.setPixmap(QPixmap.fromImage(qimg))
-        self.camera_view.setScaledContents(True)  # 라벨 크기에 맞춰 표시
-
     def on_add_medicine_clicked(self):
-        if self._last_frame is None:
+        if self._last_frame_rgb is None:
             self.statusbar.showMessage("아직 카메라 프레임이 없습니다.", 2000)
             return
 
-        save_path = self.image_dir / f"medicine.jpg"
-        #model 위치
-        model_path = r"C:/Users/sd674/Documents/medicine_manager/mm_model/mm_model.h5"
-        class_indices_path = r"C:/Users/sd674/Documents/medicine_manager/mm_model/mm_model_class_indices.json"
+        # 저장 위치 
+        
+        base_dir = Path(__file__).resolve().parent
+        image_dir = (base_dir.parent / "image")
+        image_dir.mkdir(parents=True, exist_ok=True)
+        save_path = image_dir / "medicine.jpg"
 
-        ok = cv.imwrite(str(save_path), self._last_frame)
-        if not ok:
+        # 저장(RGB -> BGR 변환 후 imwrite)
+        import cv2 as cv
+        bgr = cv.cvtColor(self._last_frame_rgb, cv.COLOR_RGB2BGR)
+        if not cv.imwrite(str(save_path), bgr):
             self.statusbar.showMessage("사진 저장 실패", 2000)
             return
 
-        # 경로 보관
         self.captured_image_path = str(save_path)
-        
         self.statusbar.showMessage(f"사진 저장: {self.captured_image_path}", 3000)
-
-        pred = predict_func(model_path, class_indices_path)
-        value = str(pred.predict(self.captured_image_path)).strip()
-        
-        self.current_medicine_name = value
-        print(f"[DEBUG] 인식 결과 저장: {self.current_medicine_name}")
-
-        self._append_to_my_medicine_list() 
-        self._dur_check(self.current_medicine_name)
-        #self._check_for_drug_interactions(self.current_medicine_name) dur 확인
 
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
