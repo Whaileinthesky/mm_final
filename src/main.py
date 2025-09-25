@@ -25,6 +25,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        
+        #debug
+        print("Medicine Manager")
 
         self.my_medicine_list_model = QStandardItemModel(self)
         self.my_medicines_list_view.setModel(self.my_medicine_list_model)
@@ -59,6 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cam_timer = QTimer(self)
         self.cam_timer.timeout.connect(self._update_camera_preview)
         self.cam_timer.start(33)  # 약 30fps (33ms)
+        print("Timer Started")
 
         #image 저장 위치
         base_dir = Path(__file__).resolve().parent          # projects/src
