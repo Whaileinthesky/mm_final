@@ -93,15 +93,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         def _update_camera_preview(self):
-        if self.picam2 is None:
-            return
-        try:
-            frame_rgb = self.picam2.capture_array()  # RGB888
-        except Exception:
-            return
+            if self.picam2 is None:
+                return
+            try:
+                frame_rgb = self.picam2.capture_array()  # RGB888
+            except Exception:
+                return
 
-        if frame_rgb is None:
-            return
+            if frame_rgb is None:
+                return
 
         self._last_frame_rgb = frame_rgb  # 최신 프레임 저장 (캡처 시 사용)
 
