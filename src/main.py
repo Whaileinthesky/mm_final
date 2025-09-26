@@ -158,6 +158,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             )
         
         self.current_medicine_name = pred
+        print("My prediction is ", self.current_medicine_name)
 
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
