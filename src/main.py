@@ -163,6 +163,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
         name = (self.current_medicine_name).strip()
+        print("Append", name)
         if not name:
             self.statusbar.showMessage("인식된 약 이름이 없습니다.", 2000)
             return
@@ -170,7 +171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for r in range(self.my_medicine_list_model.rowCount()):
             if self.my_medicine_list_model.item(r).text() == name:
                 return
-        self.my_medicine_list_model.appendRow(QStandardItem(name))
+        self.my_medicine_list_model.appendRow(name)
 
     def _append_dur_rows(self, items) -> int:
         print("append row ")
