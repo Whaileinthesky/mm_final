@@ -156,8 +156,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             model_path= "/home/kitel/mm_final/mm_model", 
             class_indices_path="/home/kitel/mm_final/mm_model/class_indices.json"
                             )
-        pred.predict(self.captured_image_path)
-        self.current_medicine_name = pred
+        
+        self.current_medicine_name = pred.predict(self.captured_image_path)
         print("My prediction is ", self.current_medicine_name, self.captured_image_path)
 
     def _append_to_my_medicine_list(self):
