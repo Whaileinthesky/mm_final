@@ -159,6 +159,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.current_medicine_name = pred.predict(self.captured_image_path)
         print("My prediction is ", self.current_medicine_name, self.captured_image_path)
+        self._append_to_my_medicine_list()
 
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
@@ -171,7 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for r in range(self.my_medicine_list_model.rowCount()):
             if self.my_medicine_list_model.item(r).text() == name:
                 return
-        self.my_medicine_list_model.appendRow(name)
+        self.my_medicine_list_model.appendRow(QStandardItem(name))
 
     def _append_dur_rows(self, items) -> int:
         print("append row ")
