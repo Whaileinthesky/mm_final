@@ -153,16 +153,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.captured_image_path = str(save_path)
         self.statusbar.showMessage(f"사진 저장: {self.captured_image_path}", 3000)
         pred = predict_func(
-            model_path= "", 
-            class_indices_path=""
+            model_path= "/home/kitel/mm_final/mm_model", 
+            class_indices_path="/home/kitel/mm_final/mm_model/class_indices.json"
                             )
-        
+        pred.predict(self.captured_image_path)
         self.current_medicine_name = pred
-        print("My prediction is ", self.current_medicine_name)
+        print("My prediction is ", self.current_medicine_name, self.captured_image_path)
 
     def _append_to_my_medicine_list(self):
         """self.current_medicine_name를 복용 목록에 중복 없이 추가"""
-        name = (self.current_medicine_name or "").strip()
+        name = (self.current_medicine_name).strip()
         if not name:
             self.statusbar.showMessage("인식된 약 이름이 없습니다.", 2000)
             return
